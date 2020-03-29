@@ -1,5 +1,4 @@
 const { program } = require('commander');
-const { pipeline } = require('stream');
 const fs = require('fs');
 const through2 = require('through2');
 
@@ -72,7 +71,9 @@ const CaesarsCode = (chunk, shift, encode) => {
 
 
 const ERROR_CODES = {
-  BAD_ACTION: { code: 2, message: 'Invalid action!' },
+  BAD_ACTION: { code: 1, message: 'Invalid action!' },
+  BAD_INPUT: { code: 2, message: 'Invalid input!'},
+  BAD_OUTPUT: { code: 3, message: 'Invalid output!'},
 };
 
 const sendError = (errorType) => {
@@ -90,8 +91,6 @@ program
   .requiredOption('-a, --action <value>', 'an action encode/decode')
   .parse(process.argv);
 
-console.warn(program.opts());
-
 if (program.action !== ENCODE && program.action !== DECODE) {
   sendError('BAD_ACTION');
 }
@@ -99,7 +98,7 @@ if (program.action !== ENCODE && program.action !== DECODE) {
 let inputStream;
 
 if (program.input) {
-  inputStream = fs.createReadStream(program.input);
+  inputStream = fs.createReadStream(program.input).on('error', () => sendError('BAD_INPUT'));
 } else {
   inputStream = process.stdin;
 }
@@ -107,7 +106,7 @@ if (program.input) {
 let outputStream;
 
 if (program.output) {
-  outputStream = fs.createWriteStream(program.output);
+  outputStream = fs.createWriteStream(program.output).on('error', () => sendError('BAD_OUTPUT'));
 } else {
   outputStream = process.stdout;
 }
