@@ -100,38 +100,25 @@ let inputStream;
 
 if (program.input) {
   inputStream = fs.createReadStream(program.input);
+} else {
+  inputStream = process.stdin;
 }
 
 let outputStream;
 
 if (program.output) {
   outputStream = fs.createWriteStream(program.output);
+} else {
+  outputStream = process.stdout;
 }
+
+const encode = (program.action === ENCODE);
 
 inputStream
   .pipe(through2(function (chunk, enc, callback) {
-    this.push(CaesarsCode(chunk, program.shift, program.action === ENCODE));
+    this.push(CaesarsCode(chunk, program.shift, encode));
 
     callback();
    }))
   .pipe(outputStream)
   .on('finish', () => console.warn('Success!'))
-
-/*
-pipeline(
-  inputStream,
-  through2((chunk, enc, callback) => {
-    for (let i = 0; i < chunk.length; i += 1) {
-      if (chunk[i] === 97) {
-        chunk[i] = 122;
-      }
-    }
-
-    this.push(chunk);
-
-    callback();
-  }),
-  outputStream,
-);*/
-
-// const encode = (program.action === ENCODE);
