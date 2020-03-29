@@ -2,20 +2,28 @@ const { program } = require('commander');
 
 
 const ERROR_CODES = {
-  FEW_ARGUMENTS: 1,
+  BAD_ACTION: { code: 2, message: 'Invalid action!' },
 };
 
+const sendError = (errorType) => {
+  console.error(ERROR_CODES[errorType].message);
+  process.exit(ERROR_CODES[errorType].code);
+};
+
+const ENCODE = 'encode';
+const DECODE = 'decode';
+
 program
-  .option('-s', '--shift', 'a shift')
-  .option('-i', '--input', ' an input file')
-  .option('-o', '--output', 'an output file')
-  .option('-a', '--action', 'an action encode/decode');
+  .requiredOption('-s, --shift <value>', 'a shift')
+  .option('-i, --input', ' an input file')
+  .option('-o, --output', 'an output file')
+  .requiredOption('-a, --action <value>', 'an action encode/decode')
+  .parse(process.argv);
 
+console.warn(program.opts());
 
-program.parse(process.argv);
-
-if (!program.shift || !program.action) {
-  console.error('Not all necessary arguments are specified!');
-  process.exit(ERROR_CODES.FEW_ARGUMENTS);
+if (program.action !== ENCODE || program.action !== DECODE) {
+  sendError('BAD_ACTION');
 }
 
+// const encode = (program.action === ENCODE);
