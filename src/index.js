@@ -109,7 +109,7 @@ let outputStream;
 
 if (program.output) {
   outputStream = fs
-    .createWriteStream(program.output)
+    .createWriteStream(program.output, { flags: 'a' })
     .on('error', () => sendError('BAD_OUTPUT'));
 } else {
   outputStream = process.stdout;
