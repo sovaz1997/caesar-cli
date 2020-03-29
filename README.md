@@ -9,7 +9,7 @@
 
 ## Run program
 
-+ Make `node index.js <args>`
++ Make `node src/index.js <args>`
 
 ## Arguments
 

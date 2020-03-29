@@ -56,6 +56,7 @@ const encodeLetter = (letter, shift) => {
 
 const CaesarsCode = (chunk, shift, encode) => {
   shift = Number(shift);
+  shift %= ALG_LEN;
   if (!encode) {
     shift = -shift;
   }
